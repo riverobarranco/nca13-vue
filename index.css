@@ -722,11 +722,23 @@
 }
 
 .teacherdash a.btn-primary {
-    margin-right: 50px;
-    background-color: lightgray;
-    border: none;
-    margin-bottom: -70px;
-    margin-top: 10px;
+	margin-right: 4px;
+	background-color: lightgray;
+	border: none;
+  	margin-bottom: -70px;
+  	 margin-top: 10px;
+}
+
+.course-content li.section ul {
+	margin: 0px;
+}
+
+.section .label .contentwithoutlink {
+	padding-right: 0px;
+}
+
+.section .label .mod-indent-outer {
+	padding-left: 0px;
 }
 
 

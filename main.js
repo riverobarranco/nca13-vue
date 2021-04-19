@@ -380,7 +380,7 @@ const app = Vue.createApp({
                         },
                         eus: {
                             nom: "EUS",
-                            color: "rgb(202,185,103)",
+                            color: "rgb(202,158,103)",
                             ccaa: ["16"],
                             subtitulo: {
                                 es: "EUSKARA",
@@ -1186,7 +1186,7 @@ app.component('lista', {
 
 
 // esta función no se puede meter dentro del componente por un tema de scope
-function insertalo(val) {
+function insertalo(val,insertausuario) {
     if (val) {
         console.log(val);
         // definimos las variables necesarias
@@ -1195,18 +1195,49 @@ function insertalo(val) {
         var e = document.createElement("div");
         var culo;
         // accedemos al vínculo del slider / imagenalumno y extraemos su contenido
-        $.get(val, function(data) {
+        $.get(val, function (data) {
             dt = data;
             e.id = "foo";
             e.innerHTML = dt;
             culo = e.querySelector('#region-main .box').innerHTML;
             document.querySelector('#nca13-mnu-ctrl-slider').innerHTML = culo;
+            // Unimos las listas de recursos
+            var arrayunida = [];
+            arrayunida = arrayunida.concat(insertausuario.interactivas,insertausuario.recursostitulo,insertausuario.evaluaciones)
+            //Aquí realizaremos el reemplazo dinámico de urls. por ahora definimos la función
+            function textfinder (searchingtext, array) {
+              for (var i = 0; i < array.length; i++) {
+                if (array[i].titulo.split(" ")[0] == searchingtext) {
+                //console.log (array[i]);
+                return array[i];
+                break;
+                } else {
+                //console.log (array[i].titulo.split(" ")[0] + '-------------' + searchingtext)
+                }
+              }
+              return false;
+            }
+            // Sacamos todos los elementos con href del documento
+            var vinculoslista = document.querySelectorAll('#nca13-mnu-ctrl-slider .nca_book_titulo a[href], #nca13-mnu-ctrl-slider .nca_book_recursos a[href]');
+            for (var j = 0; j < vinculoslista.length; j++) {
+                var vinculoinic = vinculoslista[j].getAttribute("href");
+                //console.log(vinculoinic);
+                var vinculohref = vinculoinic
+                //console.log(vinculohref);
+                if (textfinder(vinculohref,arrayunida)) {
+                    var vinculonuevo = textfinder(vinculohref,arrayunida).url;
+                    //console.log(vinculonuevo);
+                    if (vinculonuevo) {
+                        vinculoslista[j].setAttribute("href",vinculonuevo);
+                    }
+                }
+            }
             // cargamos el filtro multimedia de nuevo para mostrar los videos de youtube
             require(["media_videojs/loader"], function(loader) {
                 loader.setUp(function(videojs) {});
             });
         });
-    }
+    } 
 }
 
 app.component('menucentral', {
