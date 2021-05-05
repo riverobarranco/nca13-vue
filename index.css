@@ -66,7 +66,7 @@
     font-weight: 900;
 }
 
-.carousel-item.row {
+.slider-vue.carousel-item.row {
     display: flex;
 }
 
@@ -96,8 +96,8 @@
 }
 
 .nca_book_proyecto_1::before,
-.nca_book_slide::before
-.carousel-item.row::before {
+.nca_book_slide::before,
+.slider-vue.carousel-item.row::before {
     content: "";
     width: 1px;
     margin-left: -1px;
@@ -107,7 +107,8 @@
 }
 
 .nca_book_proyecto_1::after,
-.nca_book_slide::after {
+.nca_book_slide::after,
+.slider-vue.carousel-item.row::after {
     content: "";
     display: table;
     clear: both;
@@ -202,6 +203,7 @@
 
 .nca_book_descripcion {
     display: block;
+    text-align: left;
 }
 
 .nca_book_descripcion_imagen_s {

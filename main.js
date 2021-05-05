@@ -1677,12 +1677,12 @@ app.component('slider', {
         </div>
     </div>
     <div v-if="sliderusuario.sliderjsonvisible" class="carousel-indicators row">
-        <div v-for="(activ, index) in sliderjson.actividades" v-bind:style="styleactividad" v-bind:class="classactividad(activ)" v-on:click="actualizarslider(index)">
-            {{ contentactividad(index) + 1 }}
+        <div v-for="(activ, index) in sliderjson.actividades" v-bind:style="styleactividad(index)" v-bind:class="classactividad(activ)" v-on:click="actualizarslider(index)">
+            {{ contentactividad(index) }}
         </div>
     </div>
-    <div v-if="sliderusuario.sliderjsonvisible" class="carousel-item row">
-        <div class="col-md-1 title nca_book_orden" v-bind:style="styleorden">
+    <div v-if="sliderusuario.sliderjsonvisible" class="slider-vue carousel-item row">
+        <div class="col-md-1 title nca_book_orden" v-bind:style="styleorden()">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <h1>{{ contentactividad(activactivo) }}</h1>
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
@@ -1737,7 +1737,7 @@ app.component('slider', {
       return temp1;
     },
     styleorden() {
-      return 'background-color:' + this.slidercolor + ';'
+      return 'background-color:' + this.slidercolor + ';';
     },
     styleactividad(index) {
       let temp1 = '';
@@ -1754,7 +1754,7 @@ app.component('slider', {
       return 'width:' + temp1 + '%;';
     },
     contentactividad(index) {
-      let temp1 = '00' + index;
+      let temp1 = '00' + (index+1);
       let temp2 = temp1.substring(temp1.length-1,temp1.length);
       return temp2;
     },
