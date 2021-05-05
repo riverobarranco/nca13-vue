@@ -1,0 +1,14 @@
+<div id="app" class="container" data-url="https://lasalle2.sallenet.org/draftfile.php/126161/user/draft/545547741/"> <!-- Ponemos atributo para rescatar la url dinámica de las imagenes -->
+
+    <div id="app-ltrl">
+      <logo v-bind:logourl="datosusuario.urlmenulateral" v-bind:logotipo="datosusuario.tipoactivo"></logo>
+      <iconos v-bind:iconosurl="datosusuario.urlmenulateral" v-bind:iconostipos="tipos" @activa-tipo="activatipo"></iconos>
+      <botones v-bind:botonestipo="datosusuario.tipoactivo" v-bind:botonessubtipos="tipoactivosubtipos" v-bind:botonestitulo="tipoactivotitulo" v-bind:botonesccaa="datosusuario.ccaa" @activa-subtipo="activasubtipo"></botones>
+      <lista @activa-seccion="cargaseccion" v-bind:listasubtipo="datosusuario.subtipoactivo" v-bind:listatitulo="subtipoactivotitulo" v-bind:listaunidades="subtipoactivounidades" v-bind:listarecursos="subtipoactivorecursos" v-bind:listacolor="subtipoactivocolor"></lista>
+    </div>
+
+    <menucentral v-bind:centralusuario="datosusuario"></menucentral>
+
+    <slider v-bind:sliderusuario="datosusuario" v-bind:sliderjson="sliderjson" v-bind:slidercolor="subtipoactivocolor"></slider>
+
+</div>

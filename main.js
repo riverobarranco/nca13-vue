@@ -9,6 +9,8 @@ const app = Vue.createApp({
           subtipoactivorotulo: "",
           subtipoactivoimagen: "",
           subtipoactivorotulito: "",
+          sliderjsonvisible: false,  // esto es para marcar si se inyecta el slider desde html o desde el json. hay que añadir esa consulta a la orden.
+          slideractivactivo: 0, // esto es la actividad activa en el slider
           urlmenulateral: "",
           ccaa: "datoccaa",
           lang: "datolang",
@@ -37,6 +39,8 @@ const app = Vue.createApp({
               ca_valencia: "Premi sobre un tipus de contingut per començar",
               en: "Click on any content type to begin", 
           },
+        },
+        sliderjson : {  // esto es para el slider dinámico
         },
         datos: {
           acg: {
@@ -1121,131 +1125,131 @@ app.component('botones', {
 
 //<!-- Componente lista -->
 
-  app.component('lista', {
-      props: {
-        listasubtipo: {
-          type: String,
-          default: '',
-        },
-        listarecursos: {
-          type: Array,
-          required: true,
-          default: [],
-        },
-        listaunidades: {
-          type: Array,
-          required: true,
-          default: [],
-        },
-        listacolor: {
-          type: String,
-          default: 'red',
-        },
-        listatitulo: {
-          type: String,
-          default: 'titulo default',
-        },
+app.component('lista', {
+    props: {
+      listasubtipo: {
+        type: String,
+        default: '',
       },
-      template: 
-        /*html*/
-        `<div id="nca13_mnu_list" class="row" v-if="listasubtipo !== ''">
-          <div class="col nca13_mnu_list_tit">
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item" v-if="listaunidades.length > 0" v-bind:style="listastyletit">
-                {{ listatitulo }}
-              </li>
-            </ul>
-            <ul class="nca13_mnu_list_rec list-group list-group-flush">
-              <li class="list-group-item" v-bind:style="listastylerec" v-for="listarecurso in listarecursos">
-                <a target="_blank" v-bind:href="listarecurso.url" v-bind:style="listastylerecuni">{{ listarecurso.texto }}</a>
-              </li>               
-              <li class="list-group-item" v-for="listaunidad in listaunidades" v-on:click="listaactivasseccion(listaunidad.url)">
-                <span v-bind:style="listastyleuni">{{ listaunidad.texto }}</span>
-              </li>	
-            </ul>
-          </div>
-        </div>`,
-      computed: {
-        listastyletit() {
-          return 'font-weight: bold; border: none; background-color: ' + this.listacolor;
-        },
-        listastylerec() {
-          //return 'border: none; background-color: rgba(' + this.listacolor.slice(4,this.listacolor.length-1) + ',0.2)';
-          return 'border: none; background-color: rgba(255,255,255,0.5)';
-        },
-        listastylerecuni() {
-          return 'color: ' + this.listacolor;
-        },
-        listastyleuni() {
-          //return 'color: ' + this.listacolor;
-          return 'color: white';
-        },
+      listarecursos: {
+        type: Array,
+        required: true,
+        default: [],
       },
-      methods: {
-          listaactivasseccion(item) {
-              this.$emit('activa-seccion', item);
-              console.log(item);
-          }
+      listaunidades: {
+        type: Array,
+        required: true,
+        default: [],
       },
-  })
+      listacolor: {
+        type: String,
+        default: 'red',
+      },
+      listatitulo: {
+        type: String,
+        default: 'titulo default',
+      },
+    },
+    template: 
+      /*html*/
+      `<div id="nca13_mnu_list" class="row" v-if="listasubtipo !== ''">
+        <div class="col nca13_mnu_list_tit">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" v-if="listaunidades.length > 0" v-bind:style="listastyletit">
+              {{ listatitulo }}
+            </li>
+          </ul>
+          <ul class="nca13_mnu_list_rec list-group list-group-flush">
+            <li class="list-group-item" v-bind:style="listastylerec" v-for="listarecurso in listarecursos">
+              <a target="_blank" v-bind:href="listarecurso.url" v-bind:style="listastylerecuni">{{ listarecurso.texto }}</a>
+            </li>               
+            <li class="list-group-item" v-for="listaunidad in listaunidades" v-on:click="listaactivasseccion(listaunidad.url)">
+              <span v-bind:style="listastyleuni">{{ listaunidad.texto }}</span>
+            </li>	
+          </ul>
+        </div>
+      </div>`,
+    computed: {
+      listastyletit() {
+        return 'font-weight: bold; border: none; background-color: ' + this.listacolor;
+      },
+      listastylerec() {
+        //return 'border: none; background-color: rgba(' + this.listacolor.slice(4,this.listacolor.length-1) + ',0.2)';
+        return 'border: none; background-color: rgba(255,255,255,0.5)';
+      },
+      listastylerecuni() {
+        return 'color: ' + this.listacolor;
+      },
+      listastyleuni() {
+        //return 'color: ' + this.listacolor;
+        return 'color: white';
+      },
+    },
+    methods: {
+        listaactivasseccion(item) {
+            this.$emit('activa-seccion', item);
+            console.log(item);
+        }
+    },
+})
 
 //<!-- Componente menucentral -->
 
 
-  // esta función no se puede meter dentro del componente por un tema de scope
-  function insertalo(val,insertausuario) {
-      if (val) {
-          console.log(val);
-          // definimos las variables necesarias
-          var fueralibro = document.createElement("div");
-          var dt;
-          var e = document.createElement("div");
-          var culo;
-          // accedemos al vínculo del slider / imagenalumno y extraemos su contenido
-          $.get(val, function (data) {
-              dt = data;
-              e.id = "foo";
-              e.innerHTML = dt;
-              culo = e.querySelector('#region-main .box').innerHTML;
-              document.querySelector('#nca13-mnu-ctrl-slider').innerHTML = culo;
-              // Unimos las listas de recursos
-              var arrayunida = [];
-              arrayunida = arrayunida.concat(insertausuario.interactivas,insertausuario.recursostitulo,insertausuario.evaluaciones)
-              //Aquí realizaremos el reemplazo dinámico de urls. por ahora definimos la función
-              function textfinder (searchingtext, array) {
-                for (var i = 0; i < array.length; i++) {
-                  if (array[i].titulo.split(" ")[0] == searchingtext) {
-                  //console.log (array[i]);
-                  return array[i];
-                  break;
-                  } else {
-                  //console.log (array[i].titulo.split(" ")[0] + '-------------' + searchingtext)
-                  }
-                }
-                return false;
+// esta función no se puede meter dentro del componente por un tema de scope
+function insertalo(val,insertausuario) {
+  if (val) {
+      console.log(val);
+      // definimos las variables necesarias
+      var fueralibro = document.createElement("div");
+      var dt;
+      var e = document.createElement("div");
+      var culo;
+      // accedemos al vínculo del slider / imagenalumno y extraemos su contenido
+      $.get(val, function (data) {
+          dt = data;
+          e.id = "foo";
+          e.innerHTML = dt;
+          culo = e.querySelector('#region-main .box').innerHTML;
+          document.querySelector('#nca13-mnu-ctrl-slider').innerHTML = culo;
+          // Unimos las listas de recursos
+          var arrayunida = [];
+          arrayunida = arrayunida.concat(insertausuario.interactivas,insertausuario.recursostitulo,insertausuario.evaluaciones)
+          //Aquí realizaremos el reemplazo dinámico de urls. por ahora definimos la función
+          function textfinder (searchingtext, array) {
+            for (var i = 0; i < array.length; i++) {
+              if (array[i].titulo.split(" ")[0] == searchingtext) {
+              //console.log (array[i]);
+              return array[i];
+              break;
+              } else {
+              //console.log (array[i].titulo.split(" ")[0] + '-------------' + searchingtext)
               }
-              // Sacamos todos los elementos con href del documento
-              var vinculoslista = document.querySelectorAll('#nca13-mnu-ctrl-slider .nca_book_titulo a[href], #nca13-mnu-ctrl-slider .nca_book_recursos a[href]');
-              for (var j = 0; j < vinculoslista.length; j++) {
-                  var vinculoinic = vinculoslista[j].getAttribute("href");
-                  //console.log(vinculoinic);
-                  var vinculohref = vinculoinic
-                  //console.log(vinculohref);
-                  if (textfinder(vinculohref,arrayunida)) {
-                      var vinculonuevo = textfinder(vinculohref,arrayunida).url;
-                      //console.log(vinculonuevo);
-                      if (vinculonuevo) {
-                          vinculoslista[j].setAttribute("href",vinculonuevo);
-                      }
+            }
+            return false;
+          }
+          // Sacamos todos los elementos con href del documento
+          var vinculoslista = document.querySelectorAll('#nca13-mnu-ctrl-slider .nca_book_titulo a[href], #nca13-mnu-ctrl-slider .nca_book_recursos a[href]');
+          for (var j = 0; j < vinculoslista.length; j++) {
+              var vinculoinic = vinculoslista[j].getAttribute("href");
+              //console.log(vinculoinic);
+              var vinculohref = vinculoinic
+              //console.log(vinculohref);
+              if (textfinder(vinculohref,arrayunida)) {
+                  var vinculonuevo = textfinder(vinculohref,arrayunida).url;
+                  //console.log(vinculonuevo);
+                  if (vinculonuevo) {
+                      vinculoslista[j].setAttribute("href",vinculonuevo);
                   }
               }
-              // cargamos el filtro multimedia de nuevo para mostrar los videos de youtube
-              require(["media_videojs/loader"], function(loader) {
-                  loader.setUp(function(videojs) {});
-              });
+          }
+          // cargamos el filtro multimedia de nuevo para mostrar los videos de youtube
+          require(["media_videojs/loader"], function(loader) {
+              loader.setUp(function(videojs) {});
           });
-      } 
-  }
+      });
+  } 
+}
 
 app.component('menucentral', {
     props: {
@@ -1368,6 +1372,8 @@ app.component('menucentral', {
           </div>
         </a>
       </div>
+
+
 
       </div>`,
     computed: {
@@ -1571,17 +1577,26 @@ app.component('menucentral', {
             console.log('slider filtro por idioma queda: ');
             console.log(temp0);
         }
+        // Filtro por origen de datos. Si existe un slider SLDR.JS, deja únicamente ese.
+        let temp2 = temp0.filter(elem => elem.indice !== "JS")
+        if (temp2.length > 0) {
+            temp0 = temp2
+        }
+        console.log('slider filtro por origen de datos queda: ' + temp0);
         // Fin de filtros.
-        // Insertamos elementos del slider; Si no hay elemento SLDR, borramos el existente
+        // Insertamos elementos del slider; Si no hay elemento SLDR, borramos el existente.
+        // Si existe elemento SLDR.JS cargará los datos JSON de base de datos y borrará el slider previo. Si no, cargara HTML desde SLDR.PF
         if (temp0[0]) {
             mountedApp.datosusuario.urlsliderfiltrado = temp0[0];
-            if (temp0[0].url) {
+            if (temp0[0].url && temp0[0].indice !== "JS") {
                 insertalo(mountedApp.datosusuario.urlsliderfiltrado.url,mountedApp.datosusuario);
+            } else {
+              // Meter aquí la función que hace la consulta y carga el JSON de la base de datos
             }
-          } else {
+        } else {
             document.querySelector('#nca13-mnu-ctrl-slider').innerHTML = "";
-          }
-          return temp0;
+        }
+        return temp0;
       },
     },
     methods: {
@@ -1590,6 +1605,168 @@ app.component('menucentral', {
       }
     },  
 })
+
+//<!-- Componente slider desde json -->
+
+app.component('slider', {
+  props: {
+      sliderusuario: {
+          type: Object,
+          required: true,
+          default: {},
+      },
+      sliderjson: {
+          type: Object,
+          required: true,
+          default: {},
+      },
+      slidercolor: {
+          type: String,
+          required: true,
+          default: 'red',
+      },
+  },
+  data() {
+    return {
+      activactivo: this.sliderusuario.slideractivactivo,
+    }
+  },
+  updated() {
+    // Aquí están los elementos que se llaman cuando el componente se ha actualizado
+    // Unimos las listas de recursos
+    var arrayunida = [];
+    arrayunida = arrayunida.concat(this.sliderusuario.interactivas,this.sliderusuario.recursostitulo,this.sliderusuario.evaluaciones);
+    //Aquí realizaremos el reemplazo dinámico de urls. por ahora definimos la función
+    function textfinder (searchingtext, array) {
+      for (var i = 0; i < array.length; i++) {
+        if (array[i].titulo.split(" ")[0] == searchingtext) {
+        //console.log (array[i]);
+        return array[i];
+        break;
+        } else {
+        //console.log (array[i].titulo.split(" ")[0] + '-------------' + searchingtext)
+        }
+      }
+      return false;
+    }
+    // Sacamos todos los elementos con href del documento
+    var vinculoslista = document.querySelectorAll('.carousel-item a[href]');
+    for (var j = 0; j < vinculoslista.length; j++) {
+        var vinculoinic = vinculoslista[j].getAttribute("href");
+        //console.log(vinculoinic);
+        var vinculohref = vinculoinic
+        //console.log(vinculohref);
+        if (textfinder(vinculohref,arrayunida)) {
+            var vinculonuevo = textfinder(vinculohref,arrayunida).url;
+            //console.log(vinculonuevo);
+            if (vinculonuevo) {
+                vinculoslista[j].setAttribute("href",vinculonuevo);
+            }
+        }
+    }
+    // cargamos el filtro multimedia de nuevo para mostrar los videos de youtube
+    require(["media_videojs/loader"], function(loader) {
+        loader.setUp(function(videojs) {});
+    });
+  },
+  template: 
+    /*html*/
+    `<div v-if="sliderusuario.sliderjsonvisible" class="carousel slide carousel-fade row">
+        <div v-for="(sesion, index) in sliderjson.sesiones" class="nca_carousel_sesiones_hija col" v-bind:style="stylesesion(sesion.numactividades)">
+            S-{{ index + 1 }}
+        </div>
+    </div>
+    <div v-if="sliderusuario.sliderjsonvisible" class="carousel-indicators row">
+        <div v-for="(activ, index) in sliderjson.actividades" v-bind:style="styleactividad" v-bind:class="classactividad(activ)" v-on:click="actualizarslider(index)">
+            {{ contentactividad(index) + 1 }}
+        </div>
+    </div>
+    <div v-if="sliderusuario.sliderjsonvisible" class="carousel-item row">
+        <div class="col-md-1 title nca_book_orden" v-bind:style="styleorden">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <h1>{{ contentactividad(activactivo) }}</h1>
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </div>
+        <div class="col-md-7">
+            <div class="col-md-12 nca_book_titulo">
+                <h1>{{ sliderjson.actividades[activactivo].titulo }}</h1>
+            </div>
+            <div class="col-md-12 left nca_book_descripcion" v-html="sliderjson.actividades[activactivo].descripcion"></div>
+        </div>
+        <div class="col-md-4">
+            <div class="nca_book_recursos" v-bind:style="styleorden">
+                <div class="row" v-for="(recur, index) in sliderjson.actividades[activactivo].recursos">
+                    <div class="nca_book_recursos_col_long">
+                        {{ sliderjson.actividades[activactivo].recursos[index].titulo }}
+                    </div>
+                    <div v-if="(sliderjson.actividades[activactivo].recursos[index].tipo !== 'video' && sliderjson.actividades[activactivo].recursos[index].tipo !== 'material')" class="nca_book_recursos_col_short">
+                        <a class="nca_book_recursos_icon_briefcase" v-bind:href="sliderjson.actividades[activactivo].recursos[index].url" target="_blank">
+                            <i v-bind:class="classicono(index)" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div v-if="sliderjson.actividades[activactivo].recursos[index].tipo == 'video'" class="nca_book_recursos_col_long">
+                        <a v-bind:href="sliderjson.actividades[activactivo].recursos[index].url" target="_blank">
+                            Content Link
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`,
+  computed: {
+  },
+  methods: {
+    classactividad(index) {
+      let temp1 = '';
+      let temp2 = '';
+      if (this.sliderusuario.slideractivactivo == index) {
+        temp1 = ' active';
+      };
+      if (this.sliderjson.actividades[this.sliderusuario.slideractivactivo].evaluable == true) {
+        temp2 = ' nca_book_activ_eval';
+      };
+      return 'col' + temp1 + temp2;
+    },
+    classicono(tipo) {
+      let temp1 = '';
+      if (tipo == 'recursos') {temp1 = "fa fa-briefcase"};
+      if (tipo == 'cuaderno') {temp1 = "fa fa-book"};
+      if (tipo == 'interactiva') {temp1 = "fa fa-laptop"};
+      if (tipo == 'externa') {temp1 = "fa fa-external-link"};
+      if (tipo == 'evaluacion') {temp1 = "fa fa-edit"};
+      return temp1;
+    },
+    styleorden() {
+      return 'background-color:' + this.slidercolor + ';'
+    },
+    styleactividad(index) {
+      let temp1 = '';
+      let temp2 = 'background-color:' + this.slidercolor + '; color:white;';
+      if (this.sliderusuario.slideractivactivo == index) {
+        return temp2;
+      } else {
+        return temp1;
+      }
+    },
+    stylesesion(elems) {
+      let temp1;
+      temp1 = ( elems / this.sliderjson.actividades.length) * 100;
+      return 'width:' + temp1 + '%;';
+    },
+    contentactividad(index) {
+      let temp1 = '00' + index;
+      let temp2 = temp1.substring(temp1.length-1,temp1.length);
+      return temp2;
+    },
+    actualizarslider(index) {
+      this.sliderusuario.slideractivactivo = index;
+      this.activactivo = this.sliderusuario.slideractivactivo;
+    },
+  },
+});
+
+
+//<!-- Carga de App -->
 
 const mountedApp = app.mount('#app');
 window.addEventListener('DOMContentLoaded', (event) => {
