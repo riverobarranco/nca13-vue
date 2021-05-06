@@ -68,17 +68,30 @@
 
 .slider-vue.carousel-item.row {
     display: flex;
+    width: 100%;
 }
 
 .carousel-item,
-.nca_book_slide {
+.nca_book_slide,
+.nca_book_slide_vue {
     margin-left: 0px !important;
     margin-right: 0px !important;
+}
+
+.carousel-item {
+    height: 100%
 }
 
 .nca_book_orden .row {
     margin-left: 0px !important;
     margin-right: 0px !important;
+}
+
+.nca_book_orden .h2 {
+    color: white;
+    text-align: center;
+    font-weight: bolder;
+    font-size:medium;
 }
 
 .nca_book_recursos {
@@ -91,24 +104,27 @@
 }
 
 .nca_book_proyecto_1,
-.nca_book_slide {
+.nca_book_slide,
+.nca_book_slide_vue {
     background: white;
+    height: 100%;
+    width:100%;
 }
 
 .nca_book_proyecto_1::before,
 .nca_book_slide::before,
-.slider-vue.carousel-item.row::before {
+.nca_book_slide_vue::before {
     content: "";
     width: 1px;
     margin-left: -1px;
     float: left;
     height: 0;
-    padding-top: 32%;
+    padding-top: 34%;
 }
 
 .nca_book_proyecto_1::after,
 .nca_book_slide::after,
-.slider-vue.carousel-item.row::after {
+.nca_book_slide_vue::after {
     content: "";
     display: table;
     clear: both;
@@ -116,6 +132,7 @@
 
 .carousel-inner {
     margin-top: 20px;
+    min-height: 28vw;
 }
 
 .carousel-control-prev,
@@ -146,13 +163,14 @@
     text-align: left !important;
 }
 
-.nca_book_slide .col-md-4 {
+.nca_book_slide .col-md-4,
+.nca_book_slide_vue .col-md-4 {
     padding-right: 0px !important;
 }
 
 .nca_book_recursos .row {
     border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-    padding-top: 0.5em;
+    padding-top: 1em;
     padding-bottom: 0.5em;
     color: white;
     font-family: arial;
@@ -165,10 +183,6 @@
 
 .nca_book_recursos .row:last-child {
     border-bottom: none;
-}
-
-.nca_book_recursos_col_long {
-    padding-left: 15px;
 }
 
 .nca_book_recursos_col_long ul {
@@ -233,7 +247,7 @@
 }
 
 .nca_book_recursos {
-    padding: 1em;
+    padding: 1.5em;
 }
 
 .nca_book_recursos_img {
@@ -251,6 +265,7 @@
     opacity: 0.2;
     font-size: 1.5em;
     color: white;
+    text-align: end;
 }
 
 .nca_book_recursos_col_short a:not([href]) {
@@ -284,7 +299,6 @@
 
 .nca_book_recursos_col_long {
     Width: 80%;
-    padding-left: 20px;
 }
 
 .nca_book_recursos_col_short {

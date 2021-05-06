@@ -1649,8 +1649,8 @@ app.component('slider', {
       }
       return false;
     }
-    // Sacamos todos los elementos con href del documento
-    var vinculoslista = document.querySelectorAll('.carousel-item a[href]');
+    // Sacamos todos los elementos con href del slider (no del json)
+    var vinculoslista = document.querySelectorAll('.nca_book_recursos_col_short a[href]');
     for (var j = 0; j < vinculoslista.length; j++) {
         var vinculoinic = vinculoslista[j].getAttribute("href");
         //console.log(vinculoinic);
@@ -1671,44 +1671,62 @@ app.component('slider', {
   },
   template: 
     /*html*/
-    `<div v-if="sliderusuario.sliderjsonvisible" class="carousel slide carousel-fade row">
-        <div v-for="(sesion, index) in sliderjson.sesiones" class="nca_carousel_sesiones_hija col" v-bind:style="stylesesion(sesion.numactividades)">
-            S-{{ index + 1 }}
-        </div>
-    </div>
-    <div v-if="sliderusuario.sliderjsonvisible" class="carousel-indicators row">
-        <div v-for="(activ, index) in sliderjson.actividades" v-bind:style="styleactividad(index)" v-bind:class="classactividad(activ)" v-on:click="actualizarslider(index)">
-            {{ contentactividad(index) }}
-        </div>
-    </div>
-    <div v-if="sliderusuario.sliderjsonvisible" class="slider-vue carousel-item row">
-        <div class="col-md-1 title nca_book_orden" v-bind:style="styleorden()">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <h1>{{ contentactividad(activactivo) }}</h1>
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </div>
-        <div class="col-md-7">
-            <div class="col-md-12 nca_book_titulo">
-                <h1>{{ sliderjson.actividades[activactivo].titulo }}</h1>
+    `<div v-if="sliderusuario.sliderjsonvisible" class="carousel slide carousel-fade">
+
+        <div class="carousel-sesiones row" style="position:relative">
+            <div v-for="(sesion, index) in sliderjson.sesiones" class="nca_carousel_sesiones_hija col" v-bind:style="stylesesion(sesion.numactividades)">
+                S-{{ index + 1 }}
             </div>
-            <div class="col-md-12 left nca_book_descripcion" v-html="sliderjson.actividades[activactivo].descripcion"></div>
         </div>
-        <div class="col-md-4">
-            <div class="nca_book_recursos" v-bind:style="styleorden">
-                <div class="row" v-for="(recur, index) in sliderjson.actividades[activactivo].recursos">
-                    <div class="nca_book_recursos_col_long">
-                        {{ sliderjson.actividades[activactivo].recursos[index].titulo }}
+
+        <div style="position:relative" class="carousel-indicators row">
+            <div v-for="(activ, index) in sliderjson.actividades" v-bind:style="styleactividad(index)" v-bind:class="classactividad(index)" v-on:click="actualizarslider(index)">
+                {{ contentactividad(index) }}
+            </div>
+        </div>
+
+        <div class="carousel-inner">
+            <div class="slider-vue carousel-item row">
+
+                <div class="nca_book_slide_vue row">
+                    <div class="col-md-1 title nca_book_orden" v-bind:style="styleorden()">
+                        <div class="row align-items-center" style="text-align:center;">
+                            <div class="col-md-3"><span class="carousel-control-prev-icon" aria-hidden="true" v-on:click="actualizarslider(activatras())"></span></div>
+                            <div class="col-md-6"><h1>{{ contentactividad(activactivo) }}</h1></div>
+                            <div class="col-md-3"><span class="carousel-control-next-icon" aria-hidden="true" v-on:click="actualizarslider(activdelante())"></span></div>
+                        </div>
                     </div>
-                    <div v-if="(sliderjson.actividades[activactivo].recursos[index].tipo !== 'video' && sliderjson.actividades[activactivo].recursos[index].tipo !== 'material')" class="nca_book_recursos_col_short">
-                        <a class="nca_book_recursos_icon_briefcase" v-bind:href="sliderjson.actividades[activactivo].recursos[index].url" target="_blank">
-                            <i v-bind:class="classicono(index)" aria-hidden="true"></i>
-                        </a>
+
+                    <div class="col-md-7">
+                        <div class="col-md-12 nca_book_titulo">
+                            <h2>{{ sliderjson.actividades[activactivo].titulo }}</h2>
+                        </div>
+                        <div class="col-md-12 left nca_book_descripcion" v-html="sliderjson.actividades[activactivo].descripcion"></div>
                     </div>
-                    <div v-if="sliderjson.actividades[activactivo].recursos[index].tipo == 'video'" class="nca_book_recursos_col_long">
-                        <a v-bind:href="sliderjson.actividades[activactivo].recursos[index].url" target="_blank">
-                            Content Link
-                        </a>
+
+                    <div class="col-md-4">
+                        <div class="nca_book_recursos" v-bind:style="styleorden()">
+                            <div class="row" v-for="(recur, index) in sliderjson.actividades[activactivo].recursos">
+                                <div class="nca_book_recursos_col_long">
+                                    {{ sliderjson.actividades[activactivo].recursos[index].titulo }}
+                                </div>
+                                <div v-if="(sliderjson.actividades[activactivo].recursos[index].tipo !== 'mat')" class="nca_book_recursos_col_short">
+                                    <a class="nca_book_recursos_icon" v-bind:href="sliderjson.actividades[activactivo].recursos[index].url" target="_blank">
+                                        <i v-bind:class="classicono(index)" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div v-if="sliderjson.actividades[activactivo].recursos[index].tipo == 'vid' && recursourlvideo(sliderjson.actividades[activactivo].recursos[index].url) == ''" class="nca_book_recursos_col_long" style="width:100%; margin-top:10px;">
+                                    <a v-bind:href="sliderjson.actividades[activactivo].recursos[index].url" target="_blank">
+                                        Content Link
+                                    </a>
+                                </div>
+                                <div v-if="sliderjson.actividades[activactivo].recursos[index].tipo == 'vid' && recursourlvideo(sliderjson.actividades[activactivo].recursos[index].url) !== ''" class="nca_book_recursos_col_long" style="height:0; width:100%; margin-top:20px; position:relative; padding-bottom:56.25%">
+                                    <iframe v-bind:src="recursourlvideo(sliderjson.actividades[activactivo].recursos[index].url)" style="position: absolute; top: 0; left: 0; height:100%; width: 100%; padding-left: 20px; padding-right:20px; padding-bottom:20px; border: 0;"></iframe>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -1722,18 +1740,21 @@ app.component('slider', {
       if (this.sliderusuario.slideractivactivo == index) {
         temp1 = ' active';
       };
-      if (this.sliderjson.actividades[this.sliderusuario.slideractivactivo].evaluable == true) {
+      if (this.sliderjson.actividades[index].evaluable == true) {
         temp2 = ' nca_book_activ_eval';
       };
       return 'col' + temp1 + temp2;
     },
-    classicono(tipo) {
+    classicono(index) {
       let temp1 = '';
-      if (tipo == 'recursos') {temp1 = "fa fa-briefcase"};
-      if (tipo == 'cuaderno') {temp1 = "fa fa-book"};
-      if (tipo == 'interactiva') {temp1 = "fa fa-laptop"};
-      if (tipo == 'externa') {temp1 = "fa fa-external-link"};
-      if (tipo == 'evaluacion') {temp1 = "fa fa-edit"};
+      let temp2 = this.sliderjson.actividades[this.activactivo].recursos[index].tipo
+      if (temp2 == 'rec') {temp1 = "fa fa-briefcase"};
+      if (temp2 == 'cua') {temp1 = "fa fa-book"};
+      if (temp2 == 'int') {temp1 = "fa fa-laptop"};
+      if (temp2 == 'ext') {temp1 = "fa fa-external-link"};
+      if (temp2 == 'eva') {temp1 = "fa fa-edit"};
+      if (temp2 == 'ral') {temp1 = "fa fa-address-card"};
+      if (temp2 == 'vid') {temp1 = "fa fa-film"};
       return temp1;
     },
     styleorden() {
@@ -1755,12 +1776,40 @@ app.component('slider', {
     },
     contentactividad(index) {
       let temp1 = '00' + (index+1);
-      let temp2 = temp1.substring(temp1.length-1,temp1.length);
+      let temp2 = temp1.substring(temp1.length-2,temp1.length);
       return temp2;
     },
     actualizarslider(index) {
       this.sliderusuario.slideractivactivo = index;
       this.activactivo = this.sliderusuario.slideractivactivo;
+    },
+    activatras() {
+      let temp1 = this.activactivo - 1;
+      if (this.activactivo == 0) {
+        return 0
+      } else {
+        return temp1;
+      }
+    },
+    activdelante() {
+      let temp1 = this.activactivo + 1;
+      if (this.activactivo == (this.sliderjson.actividades.length - 1) ) {
+        return this.activactivo;
+      } else {
+        return temp1;
+      }
+    },
+    recursourlvideo(url) {
+      let temp1 = '';
+      if (url && url.indexOf('www.yout') > -1 && url.split('v=')[1]) {
+        var video_id = url.split('v=')[1];
+        var ampersandPosition = video_id.indexOf('&');
+        if(ampersandPosition != -1) {
+          video_id = video_id.substring(0, ampersandPosition);
+        }
+        temp1 = 'https://www.youtube.com/embed/' + video_id
+      }
+      return temp1
     },
   },
 });
