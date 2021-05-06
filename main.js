@@ -1257,10 +1257,22 @@ app.component('menucentral', {
         type: Object,
         default: {},
       },
+      centralslider: {
+        type: Object,
+        default: {},       
+      },
     },
     data() {
       return {
-        centralrecursosactivo: false
+        centralrecursosactivo: false,
+        guiatraducida: {
+          es: "Guía de actividades",
+          eu: "Guía actividades euskera",
+          ca: "Guía actividades catalá",
+          gl: "Guía activdiades galego",
+          ca_valencia: "Guía actividades valenciá",
+          en: "Guía de actividades english",
+        }
       }
     },
     template: 
@@ -1358,6 +1370,9 @@ app.component('menucentral', {
       </div>
 
       <div id="nca13-mnu-ctrl-recursos" class="row justify-content-start" v-if="centralrecursosactivo">
+        <div class="col-auto">
+            <div v-bind:style="centralstylerec" style="cursor:pointer;" class="nca13-mnu-ctrl-recursos-elem" v-on:click="generapdf">{{ guiatraducida[centralusuario.lang] }}</div>
+        </div>
         <div class="col-auto" v-for="recurso in centralrecursostitulofiltrado">
           <a target="_blank" v-bind:href="recurso.url" v-bind:style="centralstylerec">
             <div class="nca13-mnu-ctrl-recursos-elem">{{ recurso.texto }}</div>
@@ -1589,9 +1604,25 @@ app.component('menucentral', {
         if (temp0[0]) {
             mountedApp.datosusuario.urlsliderfiltrado = temp0[0];
             if (temp0[0].url && temp0[0].indice !== "JS") {
+                mountedApp.datosusuario.sliderjsonvisible = false;
                 insertalo(mountedApp.datosusuario.urlsliderfiltrado.url,mountedApp.datosusuario);
             } else {
-              // Meter aquí la función que hace la consulta y carga el JSON de la base de datos
+                // Meter aquí la función que hace la consulta y carga el JSON de la base de datos
+                axios.get('https://moodle.vetorius.tk/local/slider/getslider.php?slidername=02.1.MAT-MUL-0-NO-SLDR.JS.')
+                .then(function (response) {
+                  // handle success
+                    mountedApp.sliderjson = response;
+                    document.querySelector('#nca13-mnu-ctrl-slider').innerHTML = "";
+                    mountedApp.datosusuario.sliderjsonvisible = true;
+                  console.log(response);
+                })
+                .catch(function (error) {
+                  // handle error
+                  console.log(error);
+                })
+                .then(function () {
+                  // always executed
+              });
             }
         } else {
             document.querySelector('#nca13-mnu-ctrl-slider').innerHTML = "";
@@ -1602,7 +1633,118 @@ app.component('menucentral', {
     methods: {
       actualizarecursoactivo() {
         this.centralrecursosactivo = !this.centralrecursosactivo;
-      }
+      },
+      generapdf () {
+        // Iniciamos el contenedor del pdf
+        var doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "portrait" });
+        // Ponemos el título
+        let titulo = document.querySelector('#nca13-mnu-titulo').textContent
+        doc.setFontSize(20)
+        doc.setTextColor(40)
+        doc.text(titulo, 14, 22)
+        doc.setFontSize(15)
+        // Obtenemos los datos para la tabla de contenidos
+        var finalY = 10
+        doc.text('TABLA DE CONTENIDOS', 14, finalY + 25)
+        let numactividad = 0;
+        let tablaactividad = [];
+        for (let i = 0; i < this.centralslider.sesiones.length; i++) {
+            let sesion = '00' + (i + 1);
+            sesion = sesion.substring(sesion.length-2,sesion.length);
+            let numactividades = this.centralslider.sesiones[i].numactividades;
+            let actividades = ""
+            for (let j = 0; j < numactividades; j++) {
+                actividades = actividades + this.centralslider.actividades[numactividad].titulo + '\n';
+                numactividad++;
+            }
+            tablaactividad.push(['Sesion ' + sesion, actividades])
+        }
+        // Insertamos la tabla de contenidos
+        doc.autoTable({
+          startY: finalY + 30,
+          head: [['Sesión', 'Actividades']],
+          body: tablaactividad,
+          headStyles: {
+              fillColor: [200, 200, 200],
+              fontSize: 15,
+          },
+          bodyStyles: {
+              fillColor: [245, 245, 245],
+              textColor: 50,
+          },
+            alternateRowStyles: {
+              fillColor: [245, 245, 245],
+              textColor: 50,
+          },
+        })
+        doc.addPage();
+        // titulo de lista de actividades
+        var finalY = 10
+        doc.text('SECUENCIA DE ACTIVIDADES', 14, 20)
+        // Recorremos el documento entero para generar las tablas de actividades
+        let actividadprimera = 31;
+        numactividad = 0;
+        for (let i = 0; i < this.centralslider.sesiones.length; i++) {
+            // Añadimos el número de sesion
+            let sesion = '00' + (i + 1);
+            sesion = sesion.substring(sesion.length-2,sesion.length);
+            // Por cada actividad en esta sesión metemos su tabla de actividad
+            let numactividades = this.centralslider.sesiones[i].numactividades;
+            for (let j = 0; j < numactividades; j++) {
+              // Para configurar la altura del autotable, vemos si es la primera del grupo
+              if (j == 0) {
+                actividadprimera = 31
+              } else {
+                acticidadprimera = null;
+              }
+              // Definimos el contenido de la tabla
+              let temp1 = this.centralslider.actividades[numactividad]
+              let temp2 = '00' + (numactividad + 1);
+              temp2 = temp2.substring(temp2.length-2,temp2.length);
+              // Metemos el titulo
+              doc.text('Sesion ' + sesion + '   Actividad ' + (j + 1) + ' de ' + numactividades, 14, 28)
+              let temp3 = temp1.titulo;
+              let temp4 = '\n' + temp1.descripcion;
+                  // Limpiamos el html del string de la descripcion
+                  temp4 = temp4.replace(/<style([\s\S]*?)<\/style>/gi, '');
+                  temp4 = temp4.replace(/<script([\s\S]*?)<\/script>/gi, '');
+                  temp4 = temp4.replace(/<\/div>/ig, '\n\n');
+                  temp4 = temp4.replace(/<\/li>/ig, '\n\n');
+                  temp4 = temp4.replace(/<li>/ig, '  *  ');
+                  temp4 = temp4.replace(/<\/ul>/ig, '\n\n');
+                  temp4 = temp4.replace(/<\/p>/ig, '\n\n');
+                  temp4 = temp4.replace(/<br\s*[\/]?>/gi, "\n\n");
+                  temp4 = temp4.replace(/<[^>]+>/ig, '');
+              let recursos = "\n"
+              temp1.recursos.forEach((element) => recursos = recursos + element.titulo + '\n\n' )
+              doc.autoTable({
+                startY: actividadprimera,
+                head: [[temp2, temp3]],
+                body: [
+                    ['\nDescripción', temp4],
+                    ['\nRecursos', recursos],
+                ],
+                headStyles: {
+                    fillColor: [200, 200, 200],
+                    fontSize: 15,
+                },
+                bodyStyles: {
+                    fillColor: [245, 245, 245],
+                    textColor: 50,
+                },
+                  alternateRowStyles: {
+                    fillColor: [245, 245, 245],
+                    textColor: 50,
+                },
+              })
+              doc.addPage();
+              // actualizamos el numero de actividad
+              numactividad++;
+            };
+            
+        }
+        doc.save();
+      },
     },  
 })
 
@@ -1622,17 +1764,19 @@ app.component('slider', {
       },
       slidercolor: {
           type: String,
-          required: true,
+          required: false,
           default: 'red',
       },
   },
   data() {
     return {
       activactivo: this.sliderusuario.slideractivactivo,
+      slidercolorFijo: this.sliderusuario.color,
     }
   },
   updated() {
     // Aquí están los elementos que se llaman cuando el componente se ha actualizado
+    this.slidercolorFijo = this.sliderusuario.color;
     // Unimos las listas de recursos
     var arrayunida = [];
     arrayunida = arrayunida.concat(this.sliderusuario.interactivas,this.sliderusuario.recursostitulo,this.sliderusuario.evaluaciones);
@@ -1705,7 +1849,7 @@ app.component('slider', {
                     </div>
 
                     <div class="col-md-4">
-                        <div class="nca_book_recursos" v-bind:style="styleorden()">
+                        <div class="nca_book_recursos" v-bind:style="'background-color:' + slidercolorAclarado(slidercolorFijo)">
                             <div class="row" v-for="(recur, index) in sliderjson.actividades[activactivo].recursos">
                                 <div class="nca_book_recursos_col_long">
                                     {{ sliderjson.actividades[activactivo].recursos[index].titulo }}
@@ -1734,6 +1878,15 @@ app.component('slider', {
   computed: {
   },
   methods: {
+    slidercolorAclarado(color) {
+      if (color.split("(").length > 1) {
+        let valoresColor = color.split("(")[1].split(")")[0];
+        valoresColor = 'rgba(' + valoresColor + ',.5)'
+        return valoresColor;
+      } else {
+        return 'red'
+      }
+    },
     classactividad(index) {
       let temp1 = '';
       let temp2 = '';
@@ -1758,11 +1911,11 @@ app.component('slider', {
       return temp1;
     },
     styleorden() {
-      return 'background-color:' + this.slidercolor + ';';
+      return 'background-color:' + this.slidercolorFijo + ';';
     },
     styleactividad(index) {
       let temp1 = '';
-      let temp2 = 'background-color:' + this.slidercolor + '; color:white;';
+      let temp2 = 'background-color:' + this.slidercolorFijo + '; color:white;';
       if (this.sliderusuario.slideractivactivo == index) {
         return temp2;
       } else {

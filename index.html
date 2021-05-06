@@ -7,7 +7,7 @@
       <lista @activa-seccion="cargaseccion" v-bind:listasubtipo="datosusuario.subtipoactivo" v-bind:listatitulo="subtipoactivotitulo" v-bind:listaunidades="subtipoactivounidades" v-bind:listarecursos="subtipoactivorecursos" v-bind:listacolor="subtipoactivocolor"></lista>
     </div>
 
-    <menucentral v-bind:centralusuario="datosusuario"></menucentral>
+    <menucentral v-bind:centralusuario="datosusuario" v-bind:centralslider="sliderjson"></menucentral>
 
     <slider v-bind:sliderusuario="datosusuario" v-bind:sliderjson="sliderjson" v-bind:slidercolor="subtipoactivocolor"></slider>
 
