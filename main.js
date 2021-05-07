@@ -1272,8 +1272,12 @@ app.component('menucentral', {
           gl: "Guía activdiades galego",
           ca_valencia: "Guía actividades valenciá",
           en: "Guía de actividades english",
-        }
+        },
+        tipoactivoFijo : this.centralusuario.tipoactivo,
       }
+    },
+    updated() {
+      this.tipoactivoFijo = this.centralusuario.tipoactivo;
     },
     template: 
       /*html*/
@@ -1393,7 +1397,7 @@ app.component('menucentral', {
       </div>`,
     computed: {
       centralstyleint() {
-        return "background-color:" + this.centralusuario.color + "; background-image:url('" + this.centralusuario.urlmenulateral + this.centralusuario.tipoactivo.toUpperCase() + ".png')";
+        return "background-color:" + this.centralusuario.color + "; background-image:url('" + this.centralusuario.urlmenulateral + this.tipoactivoFijo.toUpperCase() + ".png')";
       },
       centralstylemas() {
         return 'background-color: ' + this.centralusuario.color;
@@ -1762,7 +1766,7 @@ app.component('slider', {
           required: true,
           default: {},
       },
-      slidercolor: {
+      slidercolor: { // TODO: Eliminar esta vinculacion porque no es necesaria
           type: String,
           required: false,
           default: 'red',
@@ -1836,7 +1840,7 @@ app.component('slider', {
                     <div class="col-md-1 title nca_book_orden" v-bind:style="styleorden()">
                         <div class="row align-items-center" style="text-align:center;">
                             <div class="col-md-3"><span class="carousel-control-prev-icon" aria-hidden="true" v-on:click="actualizarslider(activatras())"></span></div>
-                            <div class="col-md-6"><h1>{{ contentactividad(activactivo) }}</h1></div>
+                            <div class="col-md-6"><h2>{{ contentactividad(activactivo) }}</h2></div>
                             <div class="col-md-3"><span class="carousel-control-next-icon" aria-hidden="true" v-on:click="actualizarslider(activdelante())"></span></div>
                         </div>
                     </div>

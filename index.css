@@ -201,10 +201,10 @@
     display: block;
 }
 
-.nca_book_orden h1 {
+.nca_book_orden h2 {
     text-align: center;
     color: white;
-    font-weight: bold;
+    font-weight: bolder;
 }
 
 .nca_book_titulo {
