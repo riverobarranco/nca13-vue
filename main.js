@@ -706,7 +706,7 @@ const app = Vue.createApp({
           this.datosusuario.urlmenulateral = rutaImagen1;
         }
         
-        // Obtenemos el dato de CCAA. Ojo, esta llamada no es relativa, sino absoluta;
+        // Obtenemos el dato de CCAA. Ojo, esta llamada no es relativa, sino absoluta al estar dentro el htmlrequest;
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
@@ -1287,24 +1287,12 @@ app.component('menucentral', {
                   <div class="itemGroup itemGroup">
                       <div class="item">
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-1.png'" width="100" height="100" /></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-1.png'" width="100" height="100" /></p>
                           <p></p>
                           <p></p>
                           <p></p>
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-1.png'" width="100" height="100" /></p>
-                          <p></p>
-                      </div>
-                  </div>
-                  <div class="itemGroup itemGroup">
-                      <div class="item">
-                          <p></p>
-                          <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-2.png'" width="100" height="100" /></p>
-                          <p></p>
-                          <p></p>
-                          <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-2.png'" width="100" height="100" /></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-1.png'" width="100" height="100" /></p>
                           <p></p>
                       </div>
                   </div>
@@ -1312,11 +1300,11 @@ app.component('menucentral', {
                       <div class="item">
                           <p></p>
                           <p></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-2.png'" width="100" height="100" /></p>
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-3.png'" width="100" height="100" /></p>
                           <p></p>
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-3.png'" width="100" height="100" /></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-2.png'" width="100" height="100" /></p>
                           <p></p>
                       </div>
                   </div>
@@ -1325,10 +1313,10 @@ app.component('menucentral', {
                           <p></p>
                           <p></p>
                           <p></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-3.png'" width="100" height="100" /></p>
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-4.png'" width="100" height="100" /></p>
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-4.png'" width="100" height="100" /></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-3.png'" width="100" height="100" /></p>
                           <p></p>
                       </div>
                   </div>
@@ -1338,9 +1326,21 @@ app.component('menucentral', {
                           <p></p>
                           <p></p>
                           <p></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-4.png'" width="100" height="100" /></p>
                           <p></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-5.png'" width="100" height="100" /></p>
-                          <p><img v-bind:src="centralusuario.urlmenulateral + 'Loader-5.png'" width="100" height="100" /></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-4.png'" width="100" height="100" /></p>
+                          <p></p>
+                      </div>
+                  </div>
+                  <div class="itemGroup itemGroup">
+                      <div class="item">
+                          <p></p>
+                          <p></p>
+                          <p></p>
+                          <p></p>
+                          <p></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-5.png'" width="100" height="100" /></p>
+                          <p><img v-if="centralusuario.urlmenulateral !== ''" v-bind:src="centralusuario.urlmenulateral + 'Loader-5.png'" width="100" height="100" /></p>
                           <p></p>
                       </div>
                   </div>
