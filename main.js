@@ -1639,6 +1639,31 @@ app.component('menucentral', {
         this.centralrecursosactivo = !this.centralrecursosactivo;
       },
       generapdf () {
+        // Creamos el objeto que contiene los textos traducidos
+        let textos = [];
+        textos.push({id: 'tablaContenidos', textos: {es:'TABLA DE CONTENIDOS', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'sesion', textos: {es:'Sesión', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'actividad', textos: {es:'Actividad', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'secuenciaDeActividades', textos: {es:'SECUENCIA DE ACTIVIDADES', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'de', textos: {es:'de', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'descripcion', textos: {es:'Descripción', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'recursos', textos: {es:'Recursos', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        // Creamos la función extractora de textos
+        function textoMul(id,lang) {
+          let textoTraducido = 'identificador no encontrado'
+          for (i=0; i<textos.length; i++) {
+            let textoActual = textos[i];
+            if (textoActual.id == id) {
+              if (textoActual.textos[lang] && textoActual.textos[lang] !== '') {
+                textoTraducido = textoActual.textos[lang];
+                return textoTraducido;
+              } else {
+                textoTraducido = 'traduccion no encontrada'
+                return textoTraducido;
+              }
+            }
+          }
+        }
         // Iniciamos el contenedor del pdf
         var doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "portrait" });
         // Ponemos el título
@@ -1649,7 +1674,7 @@ app.component('menucentral', {
         doc.setFontSize(15)
         // Obtenemos los datos para la tabla de contenidos
         var finalY = 10
-        doc.text('TABLA DE CONTENIDOS', 14, finalY + 25)
+        doc.text(textoMul('tablaContenidos',this.centralusuario.lang), 14, finalY + 25)
         let numactividad = 0;
         let tablaactividad = [];
         for (let i = 0; i < this.centralslider.sesiones.length; i++) {
@@ -1661,12 +1686,12 @@ app.component('menucentral', {
                 actividades = actividades + this.centralslider.actividades[numactividad].titulo + '\n';
                 numactividad++;
             }
-            tablaactividad.push(['Sesion ' + sesion, actividades])
+            tablaactividad.push([ textoMul('sesion',this.centralusuario.lang) + ' ' + sesion, actividades])
         }
         // Insertamos la tabla de contenidos
         doc.autoTable({
           startY: finalY + 30,
-          head: [['Sesión', 'Actividades']],
+          head: [[textoMul('sesion',this.centralusuario.lang), textoMul('actividad',this.centralusuario.lang)]],
           body: tablaactividad,
           headStyles: {
               fillColor: [200, 200, 200],
@@ -1684,7 +1709,7 @@ app.component('menucentral', {
         doc.addPage();
         // titulo de lista de actividades
         var finalY = 10
-        doc.text('SECUENCIA DE ACTIVIDADES', 14, 20)
+        doc.text(textoMul('secuenciaDeActividades',this.centralusuario.lang), 14, 20)
         // Recorremos el documento entero para generar las tablas de actividades
         let actividadprimera = 31;
         numactividad = 0;
@@ -1706,7 +1731,7 @@ app.component('menucentral', {
               let temp2 = '00' + (numactividad + 1);
               temp2 = temp2.substring(temp2.length-2,temp2.length);
               // Metemos el titulo
-              doc.text('Sesion ' + sesion + '   Actividad ' + (j + 1) + ' de ' + numactividades, 14, 28)
+              doc.text(textoMul('sesion',this.centralusuario.lang) + ' ' + sesion + '   '+ textoMul('actividad',this.centralusuario.lang) + ' ' + (j + 1) + ' ' + textoMul('de',this.centralusuario.lang) + ' ' + numactividades, 14, 28)
               let temp3 = temp1.titulo;
               let temp4 = '\n' + temp1.descripcion;
                   // Limpiamos el html del string de la descripcion
@@ -1725,8 +1750,8 @@ app.component('menucentral', {
                 startY: actividadprimera,
                 head: [[temp2, temp3]],
                 body: [
-                    ['\nDescripción', temp4],
-                    ['\nRecursos', recursos],
+                    ['\n' + textoMul('descripcion',this.centralusuario.lang), temp4],
+                    ['\n' + textoMul('recursos',this.centralusuario.lang), recursos],
                 ],
                 headStyles: {
                     fillColor: [200, 200, 200],
