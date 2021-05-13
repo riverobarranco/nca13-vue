@@ -769,7 +769,7 @@ const app = Vue.createApp({
 
           // Oculta la intro si la edición está desactivada. Modificaciones de estilo en función de si está o no la edición activa.
           var estaeditando = document.querySelectorAll('.editing_move').length;
-          if (estaeditando > 0) {
+          if (estaeditando > 0 && document.querySelector("#blockslider")) {
               this.datosusuario.estado = 1;
               document.querySelector("#blockslider").style.display = "block";  // mostramos el div de bloques para tener a mano la bolsa de recursos
           } else {
