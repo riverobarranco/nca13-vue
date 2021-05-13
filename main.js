@@ -690,7 +690,7 @@ const app = Vue.createApp({
           var temp2 = temp1.unidades;
           for (i=0; i < temp2.length; i++) {
             temp3 = temp2[i];
-            temp4 = {texto: temp3.texto, url: temp3.url};
+            temp4 = {texto: temp3.texto, url: temp3.url, orden: temp3.orden};
             temp0.push(temp4);
           }
           return temp0;
@@ -794,10 +794,13 @@ const app = Vue.createApp({
               // sacamos el titulo, la descripción y la url del elemento;
               temp1 = culo[i].querySelector('.sectionname a').href;
               temp2 = culo[i].querySelector('.sectionname a').innerText;
+              temp2 = temp2.split(" ")[0]; // por si acaso eliminamos texto tras el espacio
               // sacamos los elementos titulo y subtitulo si existen
               if (temp2.split("-")[0] && temp2.split("-")[1]) {
                 temp3 = temp2.split("-")[0].toLowerCase();
                 temp4 = temp2.split("-")[1].toLowerCase();
+                tempIndex = temp2.split("-")[2];
+                tempIndex = tempIndex.substring(0, 2); // dejamos sólo los dos primeros caracteres
               } else {
                 continue;
               }
@@ -816,7 +819,7 @@ const app = Vue.createApp({
                 temp5 = this.datos[temp3];
                 if (temp4 && Object.keys(temp5.hijos).indexOf(temp4) !== -1) {
                 temp6 = temp5.hijos[temp4];
-                temp6.unidades.push({ texto: temp2, url: temp1 });
+                temp6.unidades.push({ texto: temp2, url: temp1, orden: tempIndex });
                 }
               }
               // comparamos los datos con la estructura de datos y rellenamos sus elementos recurso
@@ -1164,7 +1167,8 @@ app.component('lista', {
               <a target="_blank" v-bind:href="listarecurso.url" v-bind:style="listastylerecuni">{{ listarecurso.texto }}</a>
             </li>               
             <li class="list-group-item" v-for="listaunidad in listaunidades" v-on:click="listaactivasseccion(listaunidad.url)">
-              <span v-bind:style="listastyleuni">{{ listaunidad.texto }}</span>
+              <span class="badge rounded-pill" v-bind:style="listastyleuni">{{ listaunidad.orden }}</span>
+              {{ listaunidad.texto }}
             </li>	
           </ul>
         </div>
@@ -1182,7 +1186,7 @@ app.component('lista', {
       },
       listastyleuni() {
         //return 'color: ' + this.listacolor;
-        return 'color: white';
+        return 'border-radius:5px;margin-right:10px;background-color:rgba(255,255,255,0.5);color:' + this.listacolor + ';min-width:2em;';
       },
     },
     methods: {
@@ -1641,13 +1645,13 @@ app.component('menucentral', {
       generapdf () {
         // Creamos el objeto que contiene los textos traducidos
         let textos = [];
-        textos.push({id: 'tablaContenidos', textos: {es:'TABLA DE CONTENIDOS', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
-        textos.push({id: 'sesion', textos: {es:'Sesión', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
-        textos.push({id: 'actividad', textos: {es:'Actividad', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
-        textos.push({id: 'secuenciaDeActividades', textos: {es:'SECUENCIA DE ACTIVIDADES', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
-        textos.push({id: 'de', textos: {es:'de', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
-        textos.push({id: 'descripcion', textos: {es:'Descripción', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
-        textos.push({id: 'recursos', textos: {es:'Recursos', en:'', eu:'', ca:'', ca_valencia:'', gl:''}});
+        textos.push({id: 'tablaContenidos', textos: {es:'TABLA DE CONTENIDOS', en:'TABLE OF CONTENTS', eu:'EDUKIEN TAULA', ca:'TAULA DE CONTINGUTS', ca_valencia:'TAULA DE CONTINGUTS', gl:'TÁBOA DE CONTIDOS'}});
+        textos.push({id: 'sesion', textos: {es:'Sesión', en:'Session', eu:'Saioa', ca:'Sessió', ca_valencia:'Sessió', gl:'Sesión'}});
+        textos.push({id: 'actividad', textos: {es:'Actividad', en:'Activity', eu:'Jarduera', ca:'Activitat', ca_valencia:'Activitat', gl:'Actividade'}});
+        textos.push({id: 'secuenciaDeActividades', textos: {es:'SECUENCIA DE ACTIVIDADES', en:'SEQUENCE OF ACTIVITIES', eu:'JARDUEREN HURRENKERA', ca:'SEQÜÈNCIA D\'ACTIVITATS', ca_valencia:'SEQÜÈNCIA D\'ACTIVITATS', gl:'SECUENCIA DE ACTIVIDADES'}});
+        textos.push({id: 'de', textos: {es:'de', en:'of', eu:'/', ca:'de', ca_valencia:'de', gl:'de'}});
+        textos.push({id: 'descripcion', textos: {es:'Descripción', en:'Description', eu:'Deskribapena', ca:'Descripció', ca_valencia:'Descripció', gl:'Descrición'}});
+        textos.push({id: 'recursos', textos: {es:'Recursos', en:'Resources', eu:'Baliabideak', ca:'Recursos', ca_valencia:'Recursos', gl:'Recursos'}});
         // Creamos la función extractora de textos
         function textoMul(id,lang) {
           let textoTraducido = 'identificador no encontrado'
