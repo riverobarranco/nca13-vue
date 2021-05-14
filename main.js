@@ -769,7 +769,7 @@ const app = Vue.createApp({
 
           // Oculta la intro si la edición está desactivada. Modificaciones de estilo en función de si está o no la edición activa.
           var estaeditando = document.querySelectorAll('.editing_move').length;
-          if (estaeditando > 0) {
+          if (estaeditando > 0 && document.querySelector("#blockslider")) {
               this.datosusuario.estado = 1;
               document.querySelector("#blockslider").style.display = "block";  // mostramos el div de bloques para tener a mano la bolsa de recursos
           } else {
@@ -790,10 +790,10 @@ const app = Vue.createApp({
           // barremos el curso sin sección para sacar el número de elementos y generar el menu;
           for (i=1; i<culo.length; i++) {
                 
-            if (culo[i].querySelector('.sectionname a')) {
+            if (culo[i].querySelector('.section-title a')) {
               // sacamos el titulo, la descripción y la url del elemento;
-              temp1 = culo[i].querySelector('.sectionname a').href;
-              temp2 = culo[i].querySelector('.sectionname a').innerText;
+              temp1 = culo[i].querySelector('.section-title a').href;
+              temp2 = culo[i].querySelector('.section-title a').innerText;
               temp2 = temp2.split(" ")[0]; // por si acaso eliminamos texto tras el espacio
               // sacamos los elementos titulo y subtitulo si existen
               if (temp2.split("-")[0] && temp2.split("-")[1]) {
