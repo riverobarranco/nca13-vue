@@ -746,9 +746,34 @@
     margin-top: -42px;
 }
 
-.single-section .sectionname {
+.single-section .sectionname, #page-header .mr-auto {
     display: none;
 }
+
+/* CONFIGURACIONES DE ESTILO PARA LA NUEVA VERSIÓN DE MOODLE -----------------------------------------------------------*/
+
+.topics li[id^=section-] {
+    display:none;
+}
+
+.topics li[id^=section-0] {
+    display: block;
+}
+
+#page-header .mr-auto {
+    display:none;
+}
+
+#region-main {
+    border: none;
+    padding: 0px;
+}
+
+#page-header div.card {
+    border: none;
+}
+
+/* FIN DE CONFIGURACIONES DE ESTILO PARA LA NUEVA VERSIÓN DE MOODLE -----------------------------------------------------------*/
 
 .single-section .ishidden {
     display: none;
@@ -850,6 +875,19 @@
     overflow-y: auto;
     max-height: calc(100vh - 440px);
 }
+
+::-webkit-scrollbar {
+    width: 4px;
+  }
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+::-webkit-scrollbar-thumb {
+    background: rgb(155, 155, 155); 
+  }
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(130, 130, 130); 
+  }
 
 .nca13_mnu_list_rec .list-group-item {
     background-color: lightgray;
