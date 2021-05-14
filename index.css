@@ -752,14 +752,6 @@
 
 /* CONFIGURACIONES DE ESTILO PARA LA NUEVA VERSIÓN DE MOODLE -----------------------------------------------------------*/
 
-.topics li[id^=section-] {
-    display:none;
-}
-
-.topics li[id^=section-0] {
-    display: block;
-}
-
 #page-header .mr-auto {
     display:none;
 }

@@ -12,6 +12,7 @@ const app = Vue.createApp({
           sliderjsonvisible: false,  // esto es para marcar si se inyecta el slider desde html o desde el json. hay que añadir esa consulta a la orden.
           slideractivactivo: 0, // esto es la actividad activa en el slider
           urlmenulateral: "",
+          urlseccionactiva:"",
           ccaa: "datoccaa",
           lang: "datolang",
           rol: "datorol",
@@ -774,6 +775,8 @@ const app = Vue.createApp({
               document.querySelector("#blockslider").style.display = "block";  // mostramos el div de bloques para tener a mano la bolsa de recursos
           } else {
               document.querySelector("#section-0").style.borderBottom = "none"; // Ocultamos el borde inferior de la sección 0
+              document.querySelectorAll('.topics li[id^=section-]').forEach((elem) => elem.style.display = "none"); // Ocultamos las unidades si no está editando
+              document.querySelector("#section-0").style.display = "block";
           }
 
           // sacamos la url inicial
@@ -873,6 +876,9 @@ const app = Vue.createApp({
           }
       },
       cargaseccion (urldestino) {
+          // Actualizamos el valor de la sección activa para permitir el aceso si es profesor
+          this.datosusuario.urlseccionactiva = urldestino;
+          // Hacemos la consulta y cargamos los datos
           $.get(urldestino, function (dataInt) {
               var e = document.createElement("div");
               var dt;
@@ -1001,35 +1007,53 @@ const app = Vue.createApp({
 
 app.component('logo', {
   props: {
-      logotipo: {
-          type: String,
-          required: true,
-          default: 'def',
-      },
-      logourl: {
-          type: String,
-          required: true,
-          default: document.querySelector("#app").dataset.url,
-      },
-      idioma: {
-          type: String,
-          required: true,
-          default: '',
+      logousuario: {
+        type: Object,
+        default: {},
       },
   },
   template: 
     /*html*/
     `<div v-if="logourl" id="nca13_mnu_logo" class="row">
-      <div style="width: 100%;" class="col">
+      <div v-if="this.rol == 'student' || this.rol == 'teacher'" style="width: 100%;" class="col">
         <img v-bind:src="logourl + logotipofiltrado + '.png'">
+      </div>
+      <div v-if="this.rol !== 'student' && this.rol !== 'teacher'" style="width: 100%;" class="col">
+        <a v-bind:href="seccion"> 
+          <img v-bind:src="logourl + logotipofiltrado + '.png'">
+        </a>
       </div>
     </div>`,
   computed: {
+    logotipo() {
+      return this.logousuario.tipoactivo;
+    },
+    logourl() {
+      return this.logousuario.urlmenulateral;
+    },
+    idioma() {
+      return this.logousuario.lang;
+    },
+    seccion() {
+      if (window.location.href.indexOf('section=') > -1 && M.cfg.sesskey && window.location.href.split('&')) {
+        let urlSinSeccion = window.location.href.split('&')[0] + '&sesskey=' + M.cfg.sesskey + '&edit=off';
+        return urlSinSeccion;
+      } else {
+        return this.logousuario.urlseccionactiva + '&sesskey=' + M.cfg.sesskey + '&edit=on';
+      }
+    },
+    rol() {
+      return this.logousuario.rol
+    },
     logotipofiltrado() {
       if (this.logotipo == '' || !this.logotipo) {
         return 'def';
       } else {
-        return this.logotipo;
+        if (this.idioma == 'eu') {
+          return this.logotipo + '-eu';
+        } else {
+          return this.logotipo
+        }
       }
     },
   },
@@ -1378,7 +1402,7 @@ app.component('menucentral', {
           </div>
         </div>
         <div class="col nca13-mnu-ctrl-icon">
-          <img id="nca13-mnu-imagen" v-bind:src="centralurllogo" style="width:100%">
+          <img v-if="centralurllogo !== 'vacio'" id="nca13-mnu-imagen" v-bind:src="centralurllogo" style="width:100%">
         </div>
       </div>
 
@@ -1436,7 +1460,7 @@ app.component('menucentral', {
               if (this.centralusuario.subtipoactivoimagen !== "") {
                   return this.centralusuario.urlmenulateral + this.centralusuario.subtipoactivoimagen;
               } else {
-                  return this.centralusuario.urlmenulateral + 'NCA.png';
+                  return 'vacio';
               }  
           }
       },
