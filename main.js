@@ -1011,6 +1011,11 @@ app.component('logo', {
           required: true,
           default: document.querySelector("#app").dataset.url,
       },
+      idioma: {
+          type: String,
+          required: true,
+          default: '',
+      },
   },
   template: 
     /*html*/
